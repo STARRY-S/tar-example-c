@@ -140,23 +140,19 @@ int main(int argc, char **argv)
 	}
 
 	// Write file "1.txt".
-	if ((ret = write_file(fd, "1.txt", "Hello World!")) < 0)
-	{
+	if ((ret = write_file(fd, "1.txt", "Hello World!")) < 0) {
 		goto cleanup;
 	}
 	// Write directory "test/".
-	if ((ret = write_directory(fd, "test/")) < 0)
-	{
+	if ((ret = write_directory(fd, "test/")) < 0) {
 		goto cleanup;
 	}
 	// Write file "test/2.txt".
-	if ((ret = write_file(fd, "test/2.txt", "Hello World Again!")) < 0)
-	{
+	if ((ret = write_file(fd, "test/2.txt", "Hello World Again!")) < 0) {
 		goto cleanup;
 	}
 	// Write end blocks.
-	if ((ret = write_end(fd)) < 0)
-	{
+	if ((ret = write_end(fd)) < 0) {
 		goto cleanup;
 	}
 
