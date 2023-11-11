@@ -6,22 +6,22 @@
 
 struct posix_header
 {				/* byte offset */
-  char name[100];		/*   0 */
-  char mode[8];			/* 100 */
-  char uid[8];			/* 108 */
-  char gid[8];			/* 116 */
-  char size[12];		/* 124 */
-  char mtime[12];		/* 136 */
-  char chksum[8];		/* 148 */
-  char typeflag;		/* 156 */
-  char linkname[100];		/* 157 */
-  char magic[6];		/* 257 */
-  char version[2];		/* 263 */
-  char uname[32];		/* 265 */
-  char gname[32];		/* 297 */
-  char devmajor[8];		/* 329 */
-  char devminor[8];		/* 337 */
-  char prefix[155];		/* 345 */
+	char name[100];		/*   0 */
+	char mode[8];		/* 100 */
+	char uid[8];		/* 108 */
+	char gid[8];		/* 116 */
+	char size[12];		/* 124 */
+	char mtime[12];		/* 136 */
+	char chksum[8];		/* 148 */
+	char typeflag;		/* 156 */
+	char linkname[100];	/* 157 */
+	char magic[6];		/* 257 */
+	char version[2];	/* 263 */
+	char uname[32];		/* 265 */
+	char gname[32];		/* 297 */
+	char devmajor[8];	/* 329 */
+	char devminor[8];	/* 337 */
+	char prefix[155];	/* 345 */
 				/* 500 */
 };
 
@@ -29,8 +29,8 @@ struct posix_header
 
 union block
 {
-  char buffer[BLOCKSIZE];
-  struct posix_header header;
+	char buffer[BLOCKSIZE];
+	struct posix_header header;
 };
 
 /* The checksum field is filled with this while the checksum is computed.  */
@@ -84,14 +84,14 @@ int write_file(int fd, const char *name, const char *data)
 	simple_finish_header(&g_buffer);
 
 	int ret = 0;
-	if ((ret = write(fd, &g_buffer, BLOCKSIZE)) < 0) {
+	if ((ret = write(fd, g_buffer.buffer, BLOCKSIZE)) < 0) {
 		return ret;
 	}
 
 	// Write data.
-	memset(&g_buffer, 0, BLOCKSIZE);
+	memset(g_buffer.buffer, 0, BLOCKSIZE);
 	strcpy(g_buffer.buffer, data);
-	return write(fd, &g_buffer, BLOCKSIZE);
+	return write(fd, g_buffer.buffer, BLOCKSIZE);
 }
 
 int write_directory(int fd, const char *name)
@@ -100,7 +100,7 @@ int write_directory(int fd, const char *name)
 		return -1;
 	}
 	// Write directory header.
-	memset(&g_buffer, 0, BLOCKSIZE);
+	memset(g_buffer.buffer, 0, BLOCKSIZE);
 	sprintf(g_buffer.header.name, "%s", name);
 	sprintf(g_buffer.header.mode, "0000644");
 	sprintf(g_buffer.header.uid, "0001000");
@@ -112,11 +112,7 @@ int write_directory(int fd, const char *name)
 	g_buffer.header.typeflag = '5'; // Directory.
 	simple_finish_header(&g_buffer);
 
-	int ret = write(fd, &g_buffer, BLOCKSIZE);
-	if (ret < 0) {
-		return ret;
-	}
-	return 0;
+	return write(fd, g_buffer.buffer, BLOCKSIZE);
 }
 
 int write_end(int fd)
